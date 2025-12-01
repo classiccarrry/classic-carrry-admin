@@ -91,6 +91,33 @@ input[type="number"] {
   100% { transform: rotate(360deg); }
 }
 
+/* Animation delays */
+.delay-75 {
+  animation-delay: 75ms;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+/* Circular progress ring animation */
+@keyframes progress-ring {
+  0% {
+    stroke-dashoffset: 283;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-progress-ring {
+  animation: progress-ring 2s ease-in-out infinite;
+}
+
 /* Notification */
 .notification {
   position: fixed;
