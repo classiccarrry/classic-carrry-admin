@@ -58,13 +58,11 @@ export const BackendHealthProvider = ({ children }) => {
 
     // Periodic health check every 30 seconds (without loading screen)
     const interval = setInterval(() => {
-      if (isBackendHealthy) {
-        checkBackendHealth(false);
-      }
+      checkBackendHealth(false);
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [isBackendHealthy]);
+  }, []); // Empty dependency array - only run once on mount
 
   const value = {
     isBackendHealthy,
