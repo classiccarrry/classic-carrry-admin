@@ -16,9 +16,13 @@ export const BackendHealthProvider = ({ children }) => {
   const [isChecking, setIsChecking] = useState(true);
   const [lastChecked, setLastChecked] = useState(null);
 
-  const checkBackendHealth = async () => {
+  const checkBackendHealth = async (isInitialCheck = false) => {
     try {
-      setIsChecking(true);
+      // Only show loading screen on initial check
+      if (isInitialCheck) {
+        setIsChecking(true);
+      }
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
@@ -42,18 +46,20 @@ export const BackendHealthProvider = ({ children }) => {
       setIsBackendHealthy(false);
       return false;
     } finally {
-      setIsChecking(false);
+      if (isInitialCheck) {
+        setIsChecking(false);
+      }
     }
   };
 
   useEffect(() => {
-    // Initial health check
-    checkBackendHealth();
+    // Initial health check with loading screen
+    checkBackendHealth(true);
 
-    // Periodic health check every 30 seconds
+    // Periodic health check every 30 seconds (without loading screen)
     const interval = setInterval(() => {
       if (isBackendHealthy) {
-        checkBackendHealth();
+        checkBackendHealth(false);
       }
     }, 30000);
 
