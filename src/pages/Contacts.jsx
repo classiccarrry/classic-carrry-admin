@@ -241,6 +241,13 @@ const Contacts = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex gap-2">
                         <button
+                          onClick={() => setSelectedContact(contact)}
+                          className="text-[#D2C1B6] hover:text-[#C4B5A8] transition"
+                          title="View Details"
+                        >
+                          <i className="fas fa-eye"></i>
+                        </button>
+                        <button
                           onClick={() => {
                             setSelectedContact(contact);
                             setShowReplyModal(true);
@@ -276,6 +283,119 @@ const Contacts = () => {
           </div>
         )}
       </div>
+
+      {/* Contact Detail Modal */}
+      {selectedContact && !showReplyModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 border border-gray-700 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-2xl font-bold text-white">Contact Details</h2>
+                <button
+                  onClick={() => setSelectedContact(null)}
+                  className="text-gray-400 hover:text-white transition"
+                >
+                  <i className="fas fa-times text-xl"></i>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Contact Info */}
+                <div className="bg-gray-900 border border-gray-700 p-4 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-sm font-semibold text-gray-400">Name</span>
+                      <p className="text-white mt-1">{selectedContact.name}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-gray-400">Email</span>
+                      <p className="text-white mt-1">{selectedContact.email}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-gray-400">Status</span>
+                      <p className="mt-1">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(selectedContact.status)}`}>
+                          {selectedContact.status}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-gray-400">Date</span>
+                      <p className="text-white mt-1">
+                        {new Date(selectedContact.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div className="bg-gray-900 border border-gray-700 p-4 rounded-lg">
+                  <span className="text-sm font-semibold text-gray-400">Subject</span>
+                  <p className="text-white mt-2 text-lg">{selectedContact.subject}</p>
+                </div>
+
+                {/* Message */}
+                <div className="bg-gray-900 border border-gray-700 p-4 rounded-lg">
+                  <span className="text-sm font-semibold text-gray-400">Message</span>
+                  <p className="text-gray-300 mt-2 leading-relaxed whitespace-pre-wrap">
+                    {selectedContact.message}
+                  </p>
+                </div>
+
+                {/* Reply Info (if replied) */}
+                {selectedContact.replied && selectedContact.replyMessage && (
+                  <div className="bg-green-900/20 border border-green-700 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <i className="fas fa-check-circle text-green-400"></i>
+                      <span className="text-sm font-semibold text-green-400">Reply Sent</span>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-2">
+                      {new Date(selectedContact.repliedAt).toLocaleString()}
+                    </p>
+                    <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                      {selectedContact.replyMessage}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowReplyModal(true)}
+                  className="flex-1 bg-[#D2C1B6] text-gray-900 px-4 py-3 rounded-lg font-semibold hover:bg-[#C4B5A8] transition"
+                >
+                  <i className="fas fa-reply mr-2"></i>
+                  {selectedContact.replied ? 'Reply Again' : 'Send Reply'}
+                </button>
+                <select
+                  value={selectedContact.status}
+                  onChange={(e) => {
+                    handleStatusChange(selectedContact._id, e.target.value);
+                    setSelectedContact({ ...selectedContact, status: e.target.value });
+                  }}
+                  className="px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:border-[#D2C1B6] focus:outline-none"
+                >
+                  <option value="new">New</option>
+                  <option value="read">Read</option>
+                  <option value="replied">Replied</option>
+                  <option value="archived">Archived</option>
+                </select>
+                <button
+                  onClick={() => {
+                    handleDelete(selectedContact._id);
+                    setSelectedContact(null);
+                  }}
+                  className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                  title="Delete"
+                >
+                  <i className="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Reply Modal */}
       {showReplyModal && selectedContact && (

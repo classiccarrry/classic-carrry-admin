@@ -14,10 +14,10 @@ const Coupons = () => {
   const [formData, setFormData] = useState({
     code: '',
     discountType: 'percentage',
-    discountValue: 0,
-    minPurchase: 0,
-    maxDiscount: 0,
-    usageLimit: 0,
+    discountValue: '',
+    minPurchase: '',
+    maxDiscount: '',
+    usageLimit: '',
     expiryDate: '',
     isActive: true
   });
@@ -58,11 +58,16 @@ const Coupons = () => {
         body: JSON.stringify(formData)
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         showNotification(`Coupon ${editingCoupon ? 'updated' : 'created'} successfully`, 'success');
         setShowModal(false);
         resetForm();
         fetchCoupons();
+      } else {
+        // Show the error message from backend
+        showNotification(data.message || 'Failed to save coupon', 'error');
       }
     } catch (error) {
       showNotification('Failed to save coupon', 'error');
@@ -103,10 +108,10 @@ const Coupons = () => {
     setFormData({
       code: '',
       discountType: 'percentage',
-      discountValue: 0,
-      minPurchase: 0,
-      maxDiscount: 0,
-      usageLimit: 0,
+      discountValue: '',
+      minPurchase: '',
+      maxDiscount: '',
+      usageLimit: '',
       expiryDate: '',
       isActive: true
     });
@@ -246,39 +251,43 @@ const Coupons = () => {
                   <input
                     type="number"
                     value={formData.discountValue}
-                    onChange={(e) => setFormData({...formData, discountValue: Number(e.target.value)})}
+                    onChange={(e) => setFormData({...formData, discountValue: e.target.value})}
                     className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
+                    placeholder="Enter value"
                     required
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-gray-300 mb-2">Min Purchase</label>
+                  <label className="block text-gray-300 mb-2">Min Purchase (Optional)</label>
                   <input
                     type="number"
                     value={formData.minPurchase}
-                    onChange={(e) => setFormData({...formData, minPurchase: Number(e.target.value)})}
+                    onChange={(e) => setFormData({...formData, minPurchase: e.target.value})}
                     className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
+                    placeholder="0 = No minimum"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 mb-2">Usage Limit</label>
+                  <label className="block text-gray-300 mb-2">Usage Limit (Optional)</label>
                   <input
                     type="number"
                     value={formData.usageLimit}
-                    onChange={(e) => setFormData({...formData, usageLimit: Number(e.target.value)})}
+                    onChange={(e) => setFormData({...formData, usageLimit: e.target.value})}
                     className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
+                    placeholder="0 = Unlimited"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-gray-300 mb-2">Expiry Date</label>
+                <label className="block text-gray-300 mb-2">Expiry Date (Optional)</label>
                 <input
                   type="date"
                   value={formData.expiryDate}
                   onChange={(e) => setFormData({...formData, expiryDate: e.target.value})}
                   className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
+                  placeholder="No expiry"
                 />
               </div>
               <div className="flex gap-4 pt-4">
